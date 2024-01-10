@@ -1,0 +1,80 @@
+[gd_scene load_steps=12 format=3 uid="uid://dd3g56xyxfuax"]
+
+[ext_resource type="Texture2D" uid="uid://c5ssl8pajsjwk" path="res://assets/textures/hdris/industrial_sunset_puresky_4k.exr" id="1_ponid"]
+[ext_resource type="PackedScene" uid="uid://cvjtvhmjnlx1y" path="res://assets/models/prototype-floor.glb" id="2_vxxbb"]
+[ext_resource type="PackedScene" uid="uid://bndiwcqtkoas0" path="res://scenes/player.tscn" id="3_rfq0h"]
+[ext_resource type="Texture2D" uid="uid://c7bdoqfu3ke15" path="res://assets/textures/prototype-textures/PNG/Orange/texture_01.png" id="4_6xuhc"]
+[ext_resource type="PackedScene" uid="uid://bpkxymkj3om6l" path="res://scenes/enemy.tscn" id="4_14dol"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_arf5q"]
+panorama = ExtResource("1_ponid")
+
+[sub_resource type="Sky" id="Sky_g36wd"]
+sky_material = SubResource("PanoramaSkyMaterial_arf5q")
+
+[sub_resource type="Environment" id="Environment_sihc4"]
+background_mode = 2
+sky = SubResource("Sky_g36wd")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8auxb"]
+size = Vector3(40, 2, 40)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l2f56"]
+albedo_texture = ExtResource("4_6xuhc")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fkpg1"]
+size = Vector3(101.332, 1, 152.657)
+
+[node name="World" type="Node3D"]
+
+[node name="Env" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Env"]
+environment = SubResource("Environment_sihc4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Env"]
+transform = Transform3D(0.597687, -0.722807, -0.346872, 0.692049, 0.246698, 0.678387, -0.40477, -0.645516, 0.647666, 0, 10.2632, 0)
+
+[node name="Stage" type="Node3D" parent="."]
+
+[node name="Player" parent="Stage" instance=ExtResource("3_rfq0h")]
+
+[node name="Floors" type="Node3D" parent="Stage"]
+
+[node name="Floor" type="StaticBody3D" parent="Stage/Floors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="prototype-floor" parent="Stage/Floors/Floor" instance=ExtResource("2_vxxbb")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Floors/Floor"]
+shape = SubResource("BoxShape3D_8auxb")
+
+[node name="Floor2" type="StaticBody3D" parent="Stage/Floors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -49)
+
+[node name="prototype-floor" parent="Stage/Floors/Floor2" instance=ExtResource("2_vxxbb")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Floors/Floor2"]
+shape = SubResource("BoxShape3D_8auxb")
+
+[node name="Objects" type="Node3D" parent="Stage"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Stage/Objects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 2, 0)
+use_collision = true
+size = Vector3(4, 4, 4)
+material = SubResource("StandardMaterial3D_l2f56")
+
+[node name="Triggers" type="Node3D" parent="Stage"]
+
+[node name="DeathTrigger" type="Area3D" parent="Stage/Triggers"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.0862, -23.921)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Triggers/DeathTrigger"]
+shape = SubResource("BoxShape3D_fkpg1")
+
+[node name="Enemy" parent="Stage" node_paths=PackedStringArray("player") instance=ExtResource("4_14dol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1, -16)
+player = NodePath("../Player")
+
+[connection signal="body_entered" from="Stage/Triggers/DeathTrigger" to="Stage/Player" method="_on_death_trigger_body_entered"]
