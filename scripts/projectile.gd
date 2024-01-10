@@ -24,8 +24,7 @@ func _physics_process(delta):
 func _on_projectile_body_entered(body):
 	match body:
 		player:
-			player.position = Vector3.ZERO
-			player.rotation = Vector3.ZERO
+			get_tree().call_deferred("reload_current_scene")
 
 	if body == get_parent() and deflected:
 		get_parent().queue_free()

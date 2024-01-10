@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://dd3g56xyxfuax"]
+[gd_scene load_steps=16 format=3 uid="uid://dd3g56xyxfuax"]
 
 [ext_resource type="Texture2D" uid="uid://c5ssl8pajsjwk" path="res://assets/textures/hdris/industrial_sunset_puresky_4k.exr" id="1_ponid"]
 [ext_resource type="PackedScene" uid="uid://cvjtvhmjnlx1y" path="res://assets/models/prototype-floor.glb" id="2_vxxbb"]
 [ext_resource type="PackedScene" uid="uid://bndiwcqtkoas0" path="res://scenes/player.tscn" id="3_rfq0h"]
 [ext_resource type="Texture2D" uid="uid://c7bdoqfu3ke15" path="res://assets/textures/prototype-textures/PNG/Orange/texture_01.png" id="4_6xuhc"]
 [ext_resource type="PackedScene" uid="uid://bpkxymkj3om6l" path="res://scenes/enemy.tscn" id="4_14dol"]
+[ext_resource type="Texture2D" uid="uid://dmcitdv85g2bd" path="res://assets/textures/prototype-textures/PNG/Red/texture_01.png" id="5_6q5cs"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_arf5q"]
 panorama = ExtResource("1_ponid")
@@ -22,8 +23,16 @@ size = Vector3(40, 2, 40)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l2f56"]
 albedo_texture = ExtResource("4_6xuhc")
 
+[sub_resource type="BoxMesh" id="BoxMesh_furwh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pbfaw"]
+albedo_texture = ExtResource("5_6q5cs")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_b44ku"]
+size = Vector3(31, 11, 1)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_fkpg1"]
-size = Vector3(101.332, 1, 152.657)
+size = Vector3(168.031, 1, 152.657)
 
 [node name="World" type="Node3D"]
 
@@ -57,6 +66,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -49)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Floors/Floor2"]
 shape = SubResource("BoxShape3D_8auxb")
 
+[node name="Floor3" type="StaticBody3D" parent="Stage/Floors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, -49)
+
+[node name="prototype-floor" parent="Stage/Floors/Floor3" instance=ExtResource("2_vxxbb")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Floors/Floor3"]
+shape = SubResource("BoxShape3D_8auxb")
+
 [node name="Objects" type="Node3D" parent="Stage"]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Stage/Objects"]
@@ -65,16 +82,38 @@ use_collision = true
 size = Vector3(4, 4, 4)
 material = SubResource("StandardMaterial3D_l2f56")
 
+[node name="RedWall" type="StaticBody3D" parent="Stage/Objects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 6.45814, -71.836)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Stage/Objects/RedWall"]
+transform = Transform3D(31, 0, 0, 0, 11, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_furwh")
+surface_material_override/0 = SubResource("StandardMaterial3D_pbfaw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Objects/RedWall"]
+shape = SubResource("BoxShape3D_b44ku")
+
 [node name="Triggers" type="Node3D" parent="Stage"]
 
 [node name="DeathTrigger" type="Area3D" parent="Stage/Triggers"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.0862, -23.921)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Stage/Triggers/DeathTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.3496, 0, 0)
 shape = SubResource("BoxShape3D_fkpg1")
 
-[node name="Enemy" parent="Stage" node_paths=PackedStringArray("player") instance=ExtResource("4_14dol")]
+[node name="Enemies" type="Node3D" parent="Stage"]
+
+[node name="Enemy3" parent="Stage/Enemies" node_paths=PackedStringArray("player") groups=["Enemies"] instance=ExtResource("4_14dol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60.41, 2.04662, -47.134)
+player = NodePath("../../Player")
+
+[node name="Enemy2" parent="Stage/Enemies" node_paths=PackedStringArray("player") groups=["Enemies"] instance=ExtResource("4_14dol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.3235, 2, -37.126)
+player = NodePath("../../Player")
+
+[node name="Enemy" parent="Stage/Enemies" node_paths=PackedStringArray("player") groups=["Enemies"] instance=ExtResource("4_14dol")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 1, -16)
-player = NodePath("../Player")
+player = NodePath("../../Player")
 
 [connection signal="body_entered" from="Stage/Triggers/DeathTrigger" to="Stage/Player" method="_on_death_trigger_body_entered"]

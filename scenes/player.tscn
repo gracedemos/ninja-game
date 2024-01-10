@@ -1,10 +1,45 @@
-[gd_scene load_steps=4 format=3 uid="uid://bndiwcqtkoas0"]
+[gd_scene load_steps=7 format=3 uid="uid://bndiwcqtkoas0"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_nef8p"]
+[ext_resource type="PackedScene" uid="uid://w27uhefhfmwf" path="res://assets/models/basic-sword.glb" id="2_w03rd"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bkut0"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_8lhjs"]
+
+[sub_resource type="Animation" id="Animation_lvajd"]
+resource_name = "sword_swing"
+length = 0.4
+step = 0.025
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Head/Hand/basic-sword:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0.151, -0.025, 0.678), Vector3(0.021, -0.0975, 0.678), Vector3(-0.109, -0.17, 0.678), Vector3(0.151, -0.025, 0.678)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Head/Hand/basic-sword:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(1.24584, 0.314747, 1.16592), Vector3(0.383972, 0.476475, 0.431096), Vector3(-0.47822, 0.637045, 0.462512), Vector3(1.24584, 0.314747, 1.16592)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kdq2w"]
+_data = {
+"sword_swing": SubResource("Animation_lvajd")
+}
 
 [node name="Player" type="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -18,8 +53,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 
+[node name="Hand" type="Node3D" parent="Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.889278)
+
+[node name="basic-sword" parent="Head/Hand" instance=ExtResource("2_w03rd")]
+transform = Transform3D(0.0644206, -0.0758439, 0.0098837, 0.0293454, 0.0125759, -0.0947665, 0.0706316, 0.0639496, 0.0303582, 0.151, -0.025, 0.678)
+
+[node name="RayCast3D" type="RayCast3D" parent="Head"]
+target_position = Vector3(0, 0, -3)
+
 [node name="DeflectArea" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DeflectArea"]
 transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0)
 shape = SubResource("SphereShape3D_8lhjs")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_kdq2w")
+}
