@@ -1,6 +1,6 @@
 extends Area3D
 
-@export var projectile_speed = 40.0
+@export var projectile_speed = 80.0
 @export var max_distance = 30.0
 
 var direction = Vector3.ZERO

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpkxymkj3om6l"]
+[gd_scene load_steps=6 format=3 uid="uid://bpkxymkj3om6l"]
 
 [ext_resource type="Script" path="res://scripts/enemy.gd" id="1_c2ioo"]
+[ext_resource type="AudioStream" uid="uid://cyarj58a616gx" path="res://assets/audio/bow_shoot.mp3" id="2_n4iqg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fbktd"]
 
@@ -22,3 +23,6 @@ surface_material_override/0 = SubResource("StandardMaterial3D_plero")
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 2.0
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_n4iqg")

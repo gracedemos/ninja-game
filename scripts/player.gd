@@ -1,10 +1,14 @@
 extends CharacterBody3D
 
-@export var walk_speed = 5.0
-@export var sprint_speed = 15.0
-@export var jump_velocity = 10.0
+@export var walk_speed = 12.0
+@export var slow_walk_speed = 5.0
+@export var jump_velocity = 20.0
 @export var double_jump_velocity = 15.0
-@export var dash_velocity = 40.0
+@export var dash_velocity = 80.0
+@export var dash_time = 0.25
+@export var dash_acceleration = 4.0
+@export var decceleration = 15.0
+@export var wall_gravity = 100.0
 @export var mouse_sensitivity = 0.1
 
 @onready var head = $Head
@@ -34,7 +38,7 @@ func _physics_process(delta):
 		velocity.y -= gravity * delta
 
 	if is_on_wall():
-		velocity.y = max(velocity.y, 0.0)
+		velocity.y = max(velocity.y, -wall_gravity * delta)
 
 	# Handle jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
@@ -57,21 +61,23 @@ func _physics_process(delta):
 	if direction and Input.is_action_just_pressed("dash") and not dashing and can_dash:
 		dashing = true
 		can_dash = false
-		await get_tree().create_timer(0.25).timeout
+		await get_tree().create_timer(dash_time).timeout
 		dashing = false
 	elif dashing:
-		velocity.x = direction.x * dash_velocity
-		velocity.z = direction.z * dash_velocity
-	elif direction and Input.is_action_pressed("sprint"):
-		velocity.x = direction.x * sprint_speed
-		velocity.z = direction.z * sprint_speed
+		var new_velocity = velocity.lerp(direction * dash_velocity, dash_acceleration * delta)
+		velocity.x = new_velocity.x
+		velocity.z = new_velocity.z
+	elif direction and Input.is_action_pressed("slow"):
+		velocity.x = direction.x * slow_walk_speed
+		velocity.z = direction.z * slow_walk_speed
 	elif direction:
 		velocity.x = direction.x * walk_speed
 		velocity.z = direction.z * walk_speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, walk_speed)
-		velocity.z = move_toward(velocity.z, 0, walk_speed)
-
+		var new_velocity = velocity.lerp(Vector3.ZERO, decceleration * delta)
+		velocity.x = new_velocity.x
+		velocity.z = new_velocity.z
+	
 	move_and_slide()
 
 	var areas = deflect_area.get_overlapping_areas()

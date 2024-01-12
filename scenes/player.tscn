@@ -60,12 +60,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.889278)
 transform = Transform3D(0.0644206, -0.0758439, 0.0098837, 0.0293454, 0.0125759, -0.0947665, 0.0706316, 0.0639496, 0.0303582, 0.151, -0.025, 0.678)
 
 [node name="RayCast3D" type="RayCast3D" parent="Head"]
-target_position = Vector3(0, 0, -3)
+target_position = Vector3(0, 0, -5)
 
 [node name="DeflectArea" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="DeflectArea"]
-transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0)
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 shape = SubResource("SphereShape3D_8lhjs")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

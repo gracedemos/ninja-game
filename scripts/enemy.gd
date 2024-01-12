@@ -3,6 +3,7 @@ extends CharacterBody3D
 @export var player: CharacterBody3D
 
 @onready var timer = $Timer
+@onready var audio_player = $AudioStreamPlayer3D
 
 var player_visible = false
 var projectile = preload("res://scenes/projectile.tscn")
@@ -26,4 +27,5 @@ func _physics_process(_delta):
 func _on_timer_timeout():
 	if player_visible:
 		var instance = projectile.instantiate()
+		audio_player.play()
 		add_child(instance)
